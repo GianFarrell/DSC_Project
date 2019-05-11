@@ -1,0 +1,214 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[40]:
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+from datetime import time
+import random as ran
+
+
+# In[41]:
+
+
+trf =  pd.read_csv('C:/Users/Deadbeat-Senpai/Desktop/Project/Chicago_Traffic.csv')
+del trf['Unnamed: 0']
+trf
+
+
+# In[153]:
+
+
+def car_averages_daily_hist(D):
+    F = trf[trf["DAY"]== D]
+    plt.hist((F['NUMBER.OF.READS'])/10)
+    plt.xlabel('Number of Cars per minute')
+    plt.ylabel('Frequency')
+    plt.title('Numbers of Cars passing on ' + D)
+
+
+# In[155]:
+
+
+car_averages_daily_hist("Sunday")
+
+
+# In[156]:
+
+
+car_averages_daily_hist("Tuesday")
+
+
+# In[160]:
+
+
+def car_averages_hourly_hist(ti):
+    F = trf[trf["TIME"]== ti]
+    plt.hist((F['NUMBER.OF.READS'])/10)
+    plt.xlabel('Number of Cars per minute')
+    plt.ylabel('Frequency')
+    plt.title('Numbers of Cars passing on ' + ti)
+
+
+# In[161]:
+
+
+car_averages_hourly_hist("5:10")
+
+
+# In[162]:
+
+
+car_averages_hourly_hist("10:40")
+
+
+# In[43]:
+
+
+D =np.unique(trf.DAY)
+for day in D:
+    F = trf[trf["DAY"]== day]
+    print(np.mean(F['NUMBER.OF.READS']))
+
+
+# In[149]:
+
+
+def car_averages_daily(D):
+    F = trf[trf["DAY"]== D]
+    return np.mean(F['NUMBER.OF.READS'])/10
+
+
+# In[45]:
+
+
+car_averages_daily("Sunday")
+
+
+# In[46]:
+
+
+ti = np.unique(trf.TIME)
+def car_averages_by_minute(ti):
+    F = trf[trf["TIME"]== ti]
+    return np.mean(F['NUMBER.OF.READS'])/10
+
+
+# In[48]:
+
+
+reg = np.unique(trf.REGION_ID)
+def car_averages_by_region(reg):
+    F = trf[trf["REGION_ID"]== reg]
+    return np.mean(F['NUMBER.OF.READS'])/10
+
+
+# In[63]:
+
+
+def car_count_pred(D,ti,reg):
+    carcountmodel_byday = car_averages_daily(D)
+    carcountmodel_bymin = car_averages_by_minute(ti)
+    carcountmodel_byID = car_averages_by_region(reg) 
+    #print(carcountmodel_byday)
+    #print(carcountmodel_bymin)
+    #print(carcountmodel_byID)
+    return (carcountmodel_bymin+carcountmodel_byday+carcountmodel_byID)/3
+
+
+# In[51]:
+
+
+
+
+
+# In[125]:
+
+
+rnd = ran.sample(range(1,490315), 100)
+
+
+# In[126]:
+
+
+error_chk = trf.iloc[rnd]
+
+
+# In[127]:
+
+
+error_chk
+
+
+# In[136]:
+
+
+err_hist = [abs(car_count_pred("Tuesday", "23:50", 8)-(2600/10)),
+            abs(car_count_pred("Sunday", "7:40", 23)-(405/10)),
+            abs(car_count_pred("Saturday", "23:50", 23)-(264/10)),
+            abs(car_count_pred("Sunday", "7:20", 29)-(67/10)),
+            abs(car_count_pred("Sunday", "10:01", 29)-(518/10)),
+            abs(car_count_pred("Wednesday", "1:01", 1)-(0)),
+            abs(car_count_pred("Thursday", "4:20", 21)-(145/10)),
+            abs(car_count_pred("Friday", "7:11", 29)-(534/10)),
+            abs(car_count_pred("Tuesday", "16:21", 14)-(1287/10)),
+            abs(car_count_pred("Friday", "8:40", 20)-(1049/10)),
+            abs(car_count_pred("Tuesday", "10:21", 7)-(759/10)),
+            abs(car_count_pred("Tuesday", "10:21", 7)-(759/10)),
+            abs(car_count_pred("Friday", "18:01", 7)-(980/10)),
+            abs(car_count_pred("Thursday", "3:10", 7)-(759/10)),
+            abs(car_count_pred("Tuesday", "10:21", 9)-(0)),
+            abs(car_count_pred("Saturday", "23:50", 22)-(301/10)),
+            abs(car_count_pred("Thursday", "17:21", 4)-(900/10)),
+            abs(car_count_pred("Wednesday", "5:11", 7)-(479/10)),
+            abs(car_count_pred("Thursday", "12:01", 12)-(580/10)),
+            abs(car_count_pred("Friday", "18:11", 13)-(2552/10)),
+            abs(car_count_pred("Monday", "9:10", 10)-(1770/10)),
+            abs(car_count_pred("Wednesday", "10:10", 20)-(774/10)),
+            abs(car_count_pred("Tuesday", "21:40", 13)-(694/10)),
+            abs(car_count_pred("Wednesday", "12:50", 12)-(688/10)),
+            abs(car_count_pred("Monday", "13:40", 22)-(420/10)),
+            abs(car_count_pred("Saturday", "23:50", 15)-(459/10)),
+            abs(car_count_pred("Thursday", "1:01", 8)-(270/10)),
+            abs(car_count_pred("Monday", "7:01", 19)-(1095/10)),
+            abs(car_count_pred("Monday", "16:21", 6)-(1497/10)),
+            abs(car_count_pred("Wednesday", "1:50", 28)-(37/10)),
+            abs(car_count_pred("Thursday", "17:31", 23)-(325/10)),
+            abs(car_count_pred("Tuesday", "18:40", 28)-(151/10)),
+            abs(car_count_pred("Thursday", "5:50", 26)-(744/10)),
+            abs(car_count_pred("Wednesday", "8:31", 22)-(575/10)),
+            abs(car_count_pred("Friday", "6:31", 17)-(272/10)),
+            abs(car_count_pred("Sunday", "9:31", 19)-(386/10)),
+            abs(car_count_pred("Sunday", "0:50", 17)-(238/10))]
+
+
+# In[137]:
+
+
+err_hist
+
+
+# In[138]:
+
+
+np.mean(err_hist)
+
+
+# In[139]:
+
+
+plt.hist(err_hist)
+plt.xlabel('Error')
+plt.ylabel('Frequency')
+plt.title('Average error of predictions')
+
+
+# In[ ]:
+
+
+
+
